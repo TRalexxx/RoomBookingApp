@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace HotelReserveAppServer.Enums
 {
-    public enum ApartmentClass
+    public enum RoomCategory
     {
         Econom,
-        Basic,
+        Standart,
         Lux,
         PentHouse
     }
