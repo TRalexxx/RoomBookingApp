@@ -5,6 +5,7 @@ using HotelReserveAppWF.Models;
 using HotelReserveAppWF.Enums;
 using Bogus;
 using Newtonsoft.Json;
+using Bogus.DataSets;
 
 namespace HotelReserveAppWF
 {
@@ -274,7 +275,19 @@ namespace HotelReserveAppWF
 
         private async void FIndByUserBtn_Click(object sender, EventArgs e)
         {
+            var faker = new Faker();
 
+            var user = new User();
+            if (FindByUserTB.Text.Trim().Length > 5)
+            {
+                user.Id = faker.Random.Guid();
+                user.Name = FindByUserTB.Text;
+            }
+            else
+            {
+                MessageBox.Show($"You need to enter user's name", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
             var request = new Request
             {
@@ -306,27 +319,34 @@ namespace HotelReserveAppWF
 
                     var requestRecieve = JsonConvert.DeserializeObject<Request>(data);
 
-                    if (requestRecieve != null && requestRecieve.RequestType == RequestType.RoomReserved)
+                    if (requestRecieve != null && requestRecieve.RequestType == RequestType.FindOrderByUser)
                     {
-                        MessageBox.Show($"You reserved room\nReserve details:\nReserve number: {reserve.ReserveNumber}\nReserve dates: {reserve.StartBookDate.Date} - {reserve.EndBookDate.Date}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (requestRecieve.Reserves != null && requestRecieve.Reserves.Count > 0)
+                        {
+                            FindReservesLB.Items.Clear();
+                            _reserves.Clear();
 
-                        FullNameTB.Enabled = false;
-                        FullNameTB.Text = string.Empty;
+                            foreach (var reserve in requestRecieve.Reserves)
+                            {
+                                if (reserve.User != null)
+                                    FindReservesLB.Items.Add($"{reserve.ReserveNumber} - {reserve.User.Name} ({reserve.StartBookDate.ToShortDateString()} - {reserve.EndBookDate.ToShortDateString()})");
+                                else
+                                    FindReservesLB.Items.Add($"{reserve.ReserveNumber} ({reserve.StartBookDate.Date} - {reserve.EndBookDate.Date}");
+                                
+                                _reserves.Add(reserve);
+                            }
 
-                        PhoneTB.Enabled = false;
-                        PhoneTB.Text = string.Empty;
 
-                        EmailTB.Enabled = false;
-                        EmailTB.Text = string.Empty;
-
-                        AdditionalInfoTB.Enabled = false;
-                        AdditionalInfoTB.Text = string.Empty;
-
-                        AvailableRoomsLB.Enabled = false;
-                        AvailableRoomsLB.Items.Clear();
-
-                        BookRoomBtn.Enabled = false;
-
+                            FindReservesLB.SelectedIndex = 0;
+                        }
+                    }
+                    else if (requestRecieve != null && requestRecieve.RequestType == RequestType.UserNotFound)
+                    {
+                        MessageBox.Show($"User not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else if (requestRecieve != null && requestRecieve.RequestType == RequestType.ReservesNotFound)
+                    {
+                        MessageBox.Show($"Reserves not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     else if (requestRecieve != null && requestRecieve.RequestType == RequestType.ServerError)
                     {
@@ -345,6 +365,119 @@ namespace HotelReserveAppWF
             {
                 MessageBox.Show($"{ex.Message}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 //socket.Close();
+            }
+        }
+
+        private async void FindByOrderBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var findReserve = new RoomReserve
+                {
+                    ReserveNumber = (int)FindByOrderNumberNUD.Value,
+                };
+
+                var request = new Request
+                {
+                    RequestType = RequestType.FindOrderByNumber,
+
+                    Reserves = new List<RoomReserve> { findReserve }
+                };
+
+                var requestStr = JsonConvert.SerializeObject(request);
+
+                socket.Send(Encoding.Unicode.GetBytes(requestStr));
+
+                byte[] buffer = new byte[1024];
+                string data = "";
+
+                do
+                {
+                    int l = await socket.ReceiveAsync(buffer, SocketFlags.None);
+                    data += Encoding.Unicode.GetString(buffer, 0, l);
+
+                    if (l < 1024)
+                        break;
+                }
+                while (true);
+
+                if (data.Length > 0)
+                {
+
+                    var requestRecieve = JsonConvert.DeserializeObject<Request>(data);
+
+                    if (requestRecieve != null && requestRecieve.RequestType == RequestType.FindOrderByNumber)
+                    {
+                        if (requestRecieve.Reserves != null && requestRecieve.Reserves.Count > 0)
+                        {
+                            FindReservesLB.Items.Clear();
+                            _reserves.Clear();
+
+                            foreach (var reserve in requestRecieve.Reserves)
+                            {
+                                if (reserve.User != null)
+                                    FindReservesLB.Items.Add($"{reserve.ReserveNumber} - {reserve.User.Name} ({reserve.StartBookDate.ToShortDateString()} - {reserve.EndBookDate.ToShortDateString()})");
+                                else
+                                    FindReservesLB.Items.Add($"{reserve.ReserveNumber} ({reserve.StartBookDate.Date} - {reserve.EndBookDate.Date}");
+
+                                _reserves.Add(reserve);
+                            }
+
+                            FindReservesLB.SelectedIndex = 0;
+                        }
+                    }
+                    else if (requestRecieve != null && requestRecieve.RequestType == RequestType.ReservesNotFound)
+                    {
+                        MessageBox.Show($"Reserve not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else if (requestRecieve != null && requestRecieve.RequestType == RequestType.ServerError)
+                    {
+                        MessageBox.Show($"Server error", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"Something goes wrong", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    //socket.Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //socket.Close();
+            }
+        }
+
+        private void FindReservesLB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            OrderDescriptionTB.Text = string.Empty;
+            var reserve = new RoomReserve();
+            if (FindReservesLB.SelectedItem != null)
+            {
+                reserve = _reserves.FirstOrDefault(x => x.ReserveNumber.Equals(Int32.Parse(FindReservesLB.SelectedItem.ToString().Substring(0, 9))));
+            }
+            if(reserve != null && reserve.User != null && reserve.Room != null)
+            {
+                OrderDescriptionTB.AppendText($"Order number: {reserve.ReserveNumber}");
+                OrderDescriptionTB.AppendText(Environment.NewLine);
+                OrderDescriptionTB.AppendText($"Room: {reserve.Room.Number}");
+                OrderDescriptionTB.AppendText(Environment.NewLine);
+                OrderDescriptionTB.AppendText($"Room class: {reserve.Room.Class}");
+                OrderDescriptionTB.AppendText(Environment.NewLine);
+                OrderDescriptionTB.AppendText($"Book from: {reserve.StartBookDate.ToShortDateString()}");
+                OrderDescriptionTB.AppendText(Environment.NewLine);
+                OrderDescriptionTB.AppendText($"Book to: {reserve.EndBookDate.ToShortDateString()}");
+                OrderDescriptionTB.AppendText(Environment.NewLine);
+                OrderDescriptionTB.AppendText($"User name: {reserve.User.Name}");
+                OrderDescriptionTB.AppendText(Environment.NewLine);
+                OrderDescriptionTB.AppendText($"User phone: {reserve.User.Phone}");
+                OrderDescriptionTB.AppendText(Environment.NewLine);
+                OrderDescriptionTB.AppendText($"User email: {reserve.User.Email}");
+                OrderDescriptionTB.AppendText(Environment.NewLine);
+                OrderDescriptionTB.AppendText($"Additional info: {reserve.AdditionalInfo}");
+
             }
         }
     }

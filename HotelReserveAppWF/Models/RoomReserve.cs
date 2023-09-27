@@ -15,7 +15,7 @@ namespace HotelReserveAppWF.Models
         public Room? Room { get; set; }
         public DateTime StartBookDate { get; set; }
         public DateTime EndBookDate { get; set; }
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
         public User? User { get; set; }
     }
 }

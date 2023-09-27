@@ -15,6 +15,8 @@ namespace HotelReserveAppWF.Enums
         CancelOrder,
         RoomReserved,
         ServerError,
-        CloseApp
+        CloseApp,
+        UserNotFound,
+        ReservesNotFound
     }
 }
