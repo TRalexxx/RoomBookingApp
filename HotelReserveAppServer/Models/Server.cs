@@ -5,8 +5,9 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
-using System.Text.Json;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace HotelReserveAppServer.Models
 {
@@ -43,7 +44,7 @@ namespace HotelReserveAppServer.Models
                     if (l > 0)
                     {
                         string recieveStr = Encoding.Unicode.GetString(bytes, 0, l);
-                        var recieveRequest = JsonSerializer.Deserialize<Request>(recieveStr);
+                        var recieveRequest = JsonConvert.DeserializeObject<Request>(recieveStr);
 
                         if (recieveRequest != null && recieveRequest.RequestType == Enums.RequestType.CheckFreeRooms)
                         {
@@ -58,7 +59,7 @@ namespace HotelReserveAppServer.Models
                                     Rooms = rooms,
                                 };
 
-                                string sendStr = JsonSerializer.Serialize(sendRequest);
+                                string sendStr = JsonConvert.SerializeObject(sendRequest);
 
 
                                 clientSocket.Send(Encoding.Unicode.GetBytes(sendStr));
@@ -69,6 +70,61 @@ namespace HotelReserveAppServer.Models
                             else
                             {
                                 Console.WriteLine("Wrong request!");
+                            }
+                        }
+                        if(recieveRequest != null && recieveRequest.RequestType == Enums.RequestType.BookRoom)
+                        {
+                            using var transaction = _context.Database.BeginTransaction();
+                            try
+                            {
+                                if(recieveRequest.Users != null && _context.Users.FirstOrDefault(x => x.Id.Equals(recieveRequest.Users.FirstOrDefault().Id)) != null)
+                                {
+                                    var user = recieveRequest.Users.FirstOrDefault();
+                                    if (user != null)
+                                        _context.Users.Update(user);
+
+                                }
+                                else if(recieveRequest.Users != null)
+                                {
+                                    var user = recieveRequest.Users.FirstOrDefault();
+                                    if (user != null)
+                                        _context.Users.Add(user);
+                                }
+                                
+                                if(recieveRequest.Reserves != null)
+                                {
+                                    var reserve = recieveRequest.Reserves.FirstOrDefault();
+                                    if (reserve != null)
+                                        _context.RoomReserves.Add(reserve);                                   
+                                }
+
+                                _context.SaveChanges();
+                                
+                                transaction.Commit();
+
+                                var sendRequest = new Request
+                                {
+                                    RequestType = Enums.RequestType.RoomReserved,
+                                };
+
+                                string sendStr = JsonConvert.SerializeObject(sendRequest);
+
+                                clientSocket.Send(Encoding.Unicode.GetBytes(sendStr));
+                                Console.WriteLine($"Data sended to {ns.LocalEndPoint}");
+                            }
+                            catch 
+                            { 
+                                transaction.Rollback();
+
+                                var sendRequest = new Request
+                                {
+                                    RequestType = Enums.RequestType.ServerError,
+                                };
+
+                                string sendStr = JsonConvert.SerializeObject(sendRequest);
+
+                                clientSocket.Send(Encoding.Unicode.GetBytes(sendStr));
+                                Console.WriteLine($"Data sended to {ns.LocalEndPoint}");
                             }
                         }
                         if(recieveRequest != null && recieveRequest.RequestType == Enums.RequestType.CloseApp)
@@ -127,11 +183,11 @@ namespace HotelReserveAppServer.Models
                 {
                     foreach (Room room in rooms)
                     {
-                        if (room.ReservedDates != null && room.ReservedDates.Count > 0)
+                        if (room.RoomReserves != null && room.RoomReserves.Count > 0)
                         {
                             isFree = true;
 
-                            foreach (var item in room.ReservedDates)
+                            foreach (var item in room.RoomReserves)
                             {
                                 if ((roomParams.ReserveFrom >= item.StartBookDate && roomParams.ReserveFrom <= item.EndBookDate) ||
                                     (roomParams.ReserveTo >= item.StartBookDate && roomParams.ReserveTo <= item.EndBookDate))

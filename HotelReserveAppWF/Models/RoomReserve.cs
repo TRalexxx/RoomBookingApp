@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace HotelReserveAppWF.Models
 {
-    public class ReserveDateInterval
+    public class RoomReserve
     {
         public int Id { get; set; }
         public int ReserveNumber { get; set; }
         public int RoomId { get; set; }
+        public string? AdditionalInfo { get; set; }
         public Room? Room { get; set; }
         public DateTime StartBookDate { get; set; }
         public DateTime EndBookDate { get; set; }

@@ -15,7 +15,7 @@ namespace HotelReserveAppServer.Controllers
     {
         public void Configure(EntityTypeBuilder<Room> builder)
         {
-            builder.HasMany(x=>x.ReservedDates).WithOne(x=>x.Room).HasForeignKey(x=>x.RoomId);
+            builder.HasMany(x=>x.RoomReserves).WithOne(x=>x.Room).HasForeignKey(x=>x.RoomId);
 
             var rooms = new Faker<Room>()
                 .RuleFor(x => x.Id, f => f.UniqueIndex)

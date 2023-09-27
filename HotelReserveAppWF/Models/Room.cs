@@ -15,6 +15,6 @@ namespace HotelReserveAppWF.Models
         public RoomCategory Class { get; set; }
         public string Description { get; set; } = string.Empty;
 
-        public ICollection<ReserveDateInterval>? BookedDates { get; set; }
+        public ICollection<RoomReserve>? RoomReserves { get; set; }
     }
 }

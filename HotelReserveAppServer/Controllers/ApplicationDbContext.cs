@@ -12,7 +12,7 @@ namespace HotelReserveAppServer.Controllers
     {
         public DbSet<Room> Rooms { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<ReserveDateInterval> ReserveDateIntervals { get; set; }
+        public DbSet<RoomReserve> RoomReserves { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -27,7 +27,7 @@ namespace HotelReserveAppServer.Controllers
             // For testing purposes and seeding demo data we have to call fluent configurations manually in a specified order
             builder.ApplyConfiguration(new UserFluentConfiguration());
             builder.ApplyConfiguration(new RoomFluentConfiguration());
-            builder.ApplyConfiguration(new ReserveDateIntervalFluentConfiguration());
+            builder.ApplyConfiguration(new RoomReserveFluentConfiguration());
         }
     }
 }

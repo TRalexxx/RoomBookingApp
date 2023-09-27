@@ -41,31 +41,29 @@
             label4 = new Label();
             label5 = new Label();
             label6 = new Label();
-            label7 = new Label();
             FullNameTB = new TextBox();
             label8 = new Label();
             PhoneTB = new TextBox();
             EmailTB = new TextBox();
             label9 = new Label();
             label10 = new Label();
-            PaymentTypeCB = new ComboBox();
-            label11 = new Label();
             BookRoomBtn = new Button();
-            LoginTB = new TextBox();
-            PasswordTB = new TextBox();
-            LogInBtn = new Button();
-            FindUserTB = new TextBox();
+            FindByUserTB = new TextBox();
             label12 = new Label();
-            FindUserLB = new ListBox();
-            FIndUserBtn = new Button();
+            FindReserveByUserLB = new ListBox();
+            FIndByUserBtn = new Button();
             UserDescriptionTB = new TextBox();
             label13 = new Label();
             InfantsAmountNUD = new NumericUpDown();
             AdditionalInfoTB = new TextBox();
             label14 = new Label();
             label15 = new Label();
-            SaveUserDescriptionBtn = new Button();
+            CancelOrderBtn = new Button();
             AvailableRoomsLB = new ListBox();
+            FindByOrderBtn = new Button();
+            FindReserveByOrderNumberLB = new ListBox();
+            label16 = new Label();
+            FindByOrderNumberTB = new TextBox();
             ((System.ComponentModel.ISupportInitialize)TotalPeopleAmountNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)AdultsAmountNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ChildrensAmountNUD).BeginInit();
@@ -77,15 +75,15 @@
             BookFromDTP.Location = new Point(57, 68);
             BookFromDTP.MinDate = new DateTime(2023, 9, 20, 0, 0, 0, 0);
             BookFromDTP.Name = "BookFromDTP";
-            BookFromDTP.Size = new Size(200, 23);
+            BookFromDTP.Size = new Size(236, 23);
             BookFromDTP.TabIndex = 0;
             BookFromDTP.ValueChanged += BookFromDTP_ValueChanged;
             // 
             // BookToDTP
             // 
-            BookToDTP.Location = new Point(318, 68);
+            BookToDTP.Location = new Point(342, 68);
             BookToDTP.Name = "BookToDTP";
-            BookToDTP.Size = new Size(200, 23);
+            BookToDTP.Size = new Size(217, 23);
             BookToDTP.TabIndex = 1;
             // 
             // TotalPeopleAmountNUD
@@ -101,7 +99,7 @@
             // 
             // AdultsAmountNUD
             // 
-            AdultsAmountNUD.Location = new Point(221, 136);
+            AdultsAmountNUD.Location = new Point(231, 136);
             AdultsAmountNUD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             AdultsAmountNUD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             AdultsAmountNUD.Name = "AdultsAmountNUD";
@@ -112,7 +110,7 @@
             // 
             // ChildrensAmountNUD
             // 
-            ChildrensAmountNUD.Location = new Point(342, 136);
+            ChildrensAmountNUD.Location = new Point(367, 136);
             ChildrensAmountNUD.Maximum = new decimal(new int[] { 0, 0, 0, 0 });
             ChildrensAmountNUD.Name = "ChildrensAmountNUD";
             ChildrensAmountNUD.Size = new Size(94, 23);
@@ -122,14 +120,14 @@
             // 
             RoomCategoryCB.DropDownStyle = ComboBoxStyle.DropDownList;
             RoomCategoryCB.FormattingEnabled = true;
-            RoomCategoryCB.Location = new Point(579, 68);
+            RoomCategoryCB.Location = new Point(616, 68);
             RoomCategoryCB.Name = "RoomCategoryCB";
             RoomCategoryCB.Size = new Size(130, 23);
             RoomCategoryCB.TabIndex = 5;
             // 
             // ViewAvailableRoomsBtn
             // 
-            ViewAvailableRoomsBtn.Location = new Point(579, 125);
+            ViewAvailableRoomsBtn.Location = new Point(625, 125);
             ViewAvailableRoomsBtn.Name = "ViewAvailableRoomsBtn";
             ViewAvailableRoomsBtn.Size = new Size(121, 40);
             ViewAvailableRoomsBtn.TabIndex = 6;
@@ -149,7 +147,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(318, 36);
+            label2.Location = new Point(342, 36);
             label2.Name = "label2";
             label2.Size = new Size(51, 15);
             label2.TabIndex = 8;
@@ -176,7 +174,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(221, 108);
+            label5.Location = new Point(231, 108);
             label5.Name = "label5";
             label5.Size = new Size(44, 15);
             label5.TabIndex = 11;
@@ -185,28 +183,18 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(342, 108);
+            label6.Location = new Point(367, 108);
             label6.Name = "label6";
             label6.Size = new Size(94, 15);
             label6.TabIndex = 12;
             label6.Text = "Childrens (4-17):";
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(278, 200);
-            label7.Name = "label7";
-            label7.Size = new Size(183, 15);
-            label7.TabIndex = 13;
-            label7.Text = "No available rooms for this dates.";
-            label7.Visible = false;
             // 
             // FullNameTB
             // 
             FullNameTB.Enabled = false;
             FullNameTB.Location = new Point(57, 422);
             FullNameTB.Name = "FullNameTB";
-            FullNameTB.Size = new Size(652, 23);
+            FullNameTB.Size = new Size(689, 23);
             FullNameTB.TabIndex = 14;
             // 
             // label8
@@ -231,7 +219,7 @@
             EmailTB.Enabled = false;
             EmailTB.Location = new Point(433, 478);
             EmailTB.Name = "EmailTB";
-            EmailTB.Size = new Size(276, 23);
+            EmailTB.Size = new Size(313, 23);
             EmailTB.TabIndex = 17;
             // 
             // label9
@@ -252,109 +240,67 @@
             label10.TabIndex = 19;
             label10.Text = "Email";
             // 
-            // PaymentTypeCB
-            // 
-            PaymentTypeCB.DropDownStyle = ComboBoxStyle.DropDownList;
-            PaymentTypeCB.Enabled = false;
-            PaymentTypeCB.FormattingEnabled = true;
-            PaymentTypeCB.Location = new Point(57, 533);
-            PaymentTypeCB.Name = "PaymentTypeCB";
-            PaymentTypeCB.Size = new Size(169, 23);
-            PaymentTypeCB.TabIndex = 20;
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Location = new Point(57, 515);
-            label11.Name = "label11";
-            label11.Size = new Size(83, 15);
-            label11.TabIndex = 21;
-            label11.Text = "Payment type:";
-            // 
             // BookRoomBtn
             // 
             BookRoomBtn.Enabled = false;
-            BookRoomBtn.Location = new Point(570, 532);
+            BookRoomBtn.Location = new Point(616, 525);
             BookRoomBtn.Name = "BookRoomBtn";
             BookRoomBtn.Size = new Size(130, 23);
             BookRoomBtn.TabIndex = 22;
             BookRoomBtn.Text = "Book room";
             BookRoomBtn.UseVisualStyleBackColor = true;
+            BookRoomBtn.Click += BookRoomBtn_Click;
             // 
-            // LoginTB
+            // FindByUserTB
             // 
-            LoginTB.Location = new Point(992, 28);
-            LoginTB.Name = "LoginTB";
-            LoginTB.Size = new Size(181, 23);
-            LoginTB.TabIndex = 23;
-            LoginTB.Text = "login";
-            // 
-            // PasswordTB
-            // 
-            PasswordTB.Location = new Point(992, 71);
-            PasswordTB.Name = "PasswordTB";
-            PasswordTB.Size = new Size(181, 23);
-            PasswordTB.TabIndex = 24;
-            PasswordTB.Text = "password";
-            // 
-            // LogInBtn
-            // 
-            LogInBtn.Location = new Point(1098, 108);
-            LogInBtn.Name = "LogInBtn";
-            LogInBtn.Size = new Size(75, 23);
-            LogInBtn.TabIndex = 25;
-            LogInBtn.Text = "Log in";
-            LogInBtn.UseVisualStyleBackColor = true;
-            // 
-            // FindUserTB
-            // 
-            FindUserTB.Location = new Point(842, 172);
-            FindUserTB.Name = "FindUserTB";
-            FindUserTB.Size = new Size(331, 23);
-            FindUserTB.TabIndex = 26;
+            FindByUserTB.Location = new Point(790, 68);
+            FindByUserTB.Name = "FindByUserTB";
+            FindByUserTB.Size = new Size(383, 23);
+            FindByUserTB.TabIndex = 26;
             // 
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(842, 144);
+            label12.Location = new Point(790, 36);
             label12.Name = "label12";
-            label12.Size = new Size(107, 15);
+            label12.Size = new Size(155, 15);
             label12.TabIndex = 27;
-            label12.Text = "Find user by name:";
+            label12.Text = "Find reserve by user's name:";
             // 
-            // FindUserLB
+            // FindReserveByUserLB
             // 
-            FindUserLB.FormattingEnabled = true;
-            FindUserLB.HorizontalScrollbar = true;
-            FindUserLB.ItemHeight = 15;
-            FindUserLB.Location = new Point(842, 230);
-            FindUserLB.Name = "FindUserLB";
-            FindUserLB.ScrollAlwaysVisible = true;
-            FindUserLB.Size = new Size(331, 94);
-            FindUserLB.TabIndex = 28;
+            FindReserveByUserLB.FormattingEnabled = true;
+            FindReserveByUserLB.HorizontalScrollbar = true;
+            FindReserveByUserLB.ItemHeight = 15;
+            FindReserveByUserLB.Location = new Point(790, 151);
+            FindReserveByUserLB.Name = "FindReserveByUserLB";
+            FindReserveByUserLB.ScrollAlwaysVisible = true;
+            FindReserveByUserLB.Size = new Size(383, 64);
+            FindReserveByUserLB.TabIndex = 28;
             // 
-            // FIndUserBtn
+            // FIndByUserBtn
             // 
-            FIndUserBtn.Location = new Point(1058, 201);
-            FIndUserBtn.Name = "FIndUserBtn";
-            FIndUserBtn.Size = new Size(115, 23);
-            FIndUserBtn.TabIndex = 29;
-            FIndUserBtn.Text = "Find";
-            FIndUserBtn.UseVisualStyleBackColor = true;
+            FIndByUserBtn.Location = new Point(1058, 104);
+            FIndByUserBtn.Name = "FIndByUserBtn";
+            FIndByUserBtn.Size = new Size(115, 23);
+            FIndByUserBtn.TabIndex = 29;
+            FIndByUserBtn.Text = "Find";
+            FIndByUserBtn.UseVisualStyleBackColor = true;
+            FIndByUserBtn.Click += FIndByUserBtn_Click;
             // 
             // UserDescriptionTB
             // 
-            UserDescriptionTB.Location = new Point(842, 365);
+            UserDescriptionTB.Location = new Point(790, 478);
             UserDescriptionTB.Multiline = true;
             UserDescriptionTB.Name = "UserDescriptionTB";
             UserDescriptionTB.ScrollBars = ScrollBars.Vertical;
-            UserDescriptionTB.Size = new Size(331, 304);
+            UserDescriptionTB.Size = new Size(383, 191);
             UserDescriptionTB.TabIndex = 30;
             // 
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(461, 108);
+            label13.Location = new Point(485, 108);
             label13.Name = "label13";
             label13.Size = new Size(74, 15);
             label13.TabIndex = 32;
@@ -362,7 +308,7 @@
             // 
             // InfantsAmountNUD
             // 
-            InfantsAmountNUD.Location = new Point(461, 136);
+            InfantsAmountNUD.Location = new Point(487, 136);
             InfantsAmountNUD.Maximum = new decimal(new int[] { 3, 0, 0, 0 });
             InfantsAmountNUD.Name = "InfantsAmountNUD";
             InfantsAmountNUD.Size = new Size(94, 23);
@@ -374,7 +320,7 @@
             AdditionalInfoTB.Location = new Point(57, 596);
             AdditionalInfoTB.Multiline = true;
             AdditionalInfoTB.Name = "AdditionalInfoTB";
-            AdditionalInfoTB.Size = new Size(652, 105);
+            AdditionalInfoTB.Size = new Size(689, 105);
             AdditionalInfoTB.TabIndex = 33;
             // 
             // label14
@@ -389,61 +335,98 @@
             // label15
             // 
             label15.AutoSize = true;
-            label15.Location = new Point(842, 335);
+            label15.Location = new Point(790, 451);
             label15.Name = "label15";
-            label15.Size = new Size(95, 15);
+            label15.Size = new Size(102, 15);
             label15.TabIndex = 35;
-            label15.Text = "User description:";
+            label15.Text = "Order description:";
             // 
-            // SaveUserDescriptionBtn
+            // CancelOrderBtn
             // 
-            SaveUserDescriptionBtn.Location = new Point(1098, 678);
-            SaveUserDescriptionBtn.Name = "SaveUserDescriptionBtn";
-            SaveUserDescriptionBtn.Size = new Size(75, 23);
-            SaveUserDescriptionBtn.TabIndex = 36;
-            SaveUserDescriptionBtn.Text = "Save";
-            SaveUserDescriptionBtn.UseVisualStyleBackColor = true;
+            CancelOrderBtn.Location = new Point(1058, 678);
+            CancelOrderBtn.Name = "CancelOrderBtn";
+            CancelOrderBtn.Size = new Size(115, 23);
+            CancelOrderBtn.TabIndex = 36;
+            CancelOrderBtn.Text = "Cancel order";
+            CancelOrderBtn.UseVisualStyleBackColor = true;
             // 
             // AvailableRoomsLB
             // 
             AvailableRoomsLB.Enabled = false;
             AvailableRoomsLB.FormattingEnabled = true;
+            AvailableRoomsLB.HorizontalScrollbar = true;
+            AvailableRoomsLB.ImeMode = ImeMode.Off;
             AvailableRoomsLB.ItemHeight = 15;
-            AvailableRoomsLB.Location = new Point(57, 230);
+            AvailableRoomsLB.Location = new Point(57, 185);
             AvailableRoomsLB.Name = "AvailableRoomsLB";
-            AvailableRoomsLB.Size = new Size(643, 154);
+            AvailableRoomsLB.Size = new Size(689, 199);
+            AvailableRoomsLB.Sorted = true;
             AvailableRoomsLB.TabIndex = 37;
+            // 
+            // FindByOrderBtn
+            // 
+            FindByOrderBtn.Location = new Point(1058, 298);
+            FindByOrderBtn.Name = "FindByOrderBtn";
+            FindByOrderBtn.Size = new Size(115, 23);
+            FindByOrderBtn.TabIndex = 41;
+            FindByOrderBtn.Text = "Find";
+            FindByOrderBtn.UseVisualStyleBackColor = true;
+            // 
+            // FindReserveByOrderNumberLB
+            // 
+            FindReserveByOrderNumberLB.FormattingEnabled = true;
+            FindReserveByOrderNumberLB.HorizontalScrollbar = true;
+            FindReserveByOrderNumberLB.ItemHeight = 15;
+            FindReserveByOrderNumberLB.Location = new Point(790, 345);
+            FindReserveByOrderNumberLB.Name = "FindReserveByOrderNumberLB";
+            FindReserveByOrderNumberLB.ScrollAlwaysVisible = true;
+            FindReserveByOrderNumberLB.Size = new Size(383, 64);
+            FindReserveByOrderNumberLB.TabIndex = 40;
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Location = new Point(790, 230);
+            label16.Name = "label16";
+            label16.Size = new Size(165, 15);
+            label16.TabIndex = 39;
+            label16.Text = "Find reserve by order number:";
+            // 
+            // FindByOrderNumberTB
+            // 
+            FindByOrderNumberTB.Location = new Point(790, 262);
+            FindByOrderNumberTB.Name = "FindByOrderNumberTB";
+            FindByOrderNumberTB.Size = new Size(383, 23);
+            FindByOrderNumberTB.TabIndex = 38;
             // 
             // RoomBookingApp
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1185, 743);
+            Controls.Add(FindByOrderBtn);
+            Controls.Add(FindReserveByOrderNumberLB);
+            Controls.Add(label16);
+            Controls.Add(FindByOrderNumberTB);
             Controls.Add(AvailableRoomsLB);
-            Controls.Add(SaveUserDescriptionBtn);
+            Controls.Add(CancelOrderBtn);
             Controls.Add(label15);
             Controls.Add(label14);
             Controls.Add(AdditionalInfoTB);
             Controls.Add(label13);
             Controls.Add(InfantsAmountNUD);
             Controls.Add(UserDescriptionTB);
-            Controls.Add(FIndUserBtn);
-            Controls.Add(FindUserLB);
+            Controls.Add(FIndByUserBtn);
+            Controls.Add(FindReserveByUserLB);
             Controls.Add(label12);
-            Controls.Add(FindUserTB);
-            Controls.Add(LogInBtn);
-            Controls.Add(PasswordTB);
-            Controls.Add(LoginTB);
+            Controls.Add(FindByUserTB);
             Controls.Add(BookRoomBtn);
-            Controls.Add(label11);
-            Controls.Add(PaymentTypeCB);
             Controls.Add(label10);
             Controls.Add(label9);
             Controls.Add(EmailTB);
             Controls.Add(PhoneTB);
             Controls.Add(label8);
             Controls.Add(FullNameTB);
-            Controls.Add(label7);
             Controls.Add(label6);
             Controls.Add(label5);
             Controls.Add(label4);
@@ -485,30 +468,28 @@
         private Label label4;
         private Label label5;
         private Label label6;
-        private Label label7;
         private TextBox FullNameTB;
         private Label label8;
         private TextBox PhoneTB;
         private TextBox EmailTB;
         private Label label9;
         private Label label10;
-        private ComboBox PaymentTypeCB;
-        private Label label11;
         private Button BookRoomBtn;
-        private TextBox LoginTB;
-        private TextBox PasswordTB;
-        private Button LogInBtn;
-        private TextBox FindUserTB;
+        private TextBox FindByUserTB;
         private Label label12;
-        private ListBox FindUserLB;
-        private Button FIndUserBtn;
+        private ListBox FindReserveByUserLB;
+        private Button FIndByUserBtn;
         private TextBox UserDescriptionTB;
         private Label label13;
         private NumericUpDown InfantsAmountNUD;
         private TextBox AdditionalInfoTB;
         private Label label14;
         private Label label15;
-        private Button SaveUserDescriptionBtn;
+        private Button CancelOrderBtn;
         private ListBox AvailableRoomsLB;
+        private Button FindByOrderBtn;
+        private ListBox FindReserveByOrderNumberLB;
+        private Label label16;
+        private TextBox FindByOrderNumberTB;
     }
 }

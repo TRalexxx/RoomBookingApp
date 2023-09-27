@@ -12,7 +12,7 @@ namespace HotelReserveAppServer.Models
         public RequestType RequestType { get; set; }
         public ICollection<Room>? Rooms { get; set; }
         public ICollection<User>? Users { get; set; }
-        public ICollection<ReserveDateInterval>? Reserves { get; set; }
+        public ICollection<RoomReserve>? Reserves { get; set; }
         public RoomRequestParameters? Parameters { get; set; }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HotelReserveAppServer.Models
 {
-    public class ReserveDateInterval
+    public class RoomReserve
     {
         public int Id { get; set; }
         public int ReserveNumber { get; set; }
@@ -16,5 +16,6 @@ namespace HotelReserveAppServer.Models
         public DateTime EndBookDate { get; set; }
         public Guid UserId { get; set; }
         public User? User { get; set; }
+        public string? AdditionalInfo { get; set; }
     }
 }

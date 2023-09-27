@@ -10,8 +10,11 @@ namespace HotelReserveAppServer.Enums
     {
         CheckFreeRooms,
         BookRoom,
-        FindUser,
-        SaveUserInfo,
+        FindOrderByUser,
+        FindOrderByNumber,
+        CancelOrder,
+        RoomReserved,
+        ServerError,
         CloseApp
     }
 }
