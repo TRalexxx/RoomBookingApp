@@ -37,16 +37,22 @@ namespace HotelReserveAppServer.Models
                 while (true)
                 {
 
-                    byte[] bytes = new byte[1024];
+                    byte[] buffer = new byte[1024];
+                    string data = "";
 
-                    int l = clientSocket.Receive(bytes);
-                    Console.WriteLine($"Request recieved from {ns.LocalEndPoint}");
-
-
-                    if (l > 0)
+                    do
                     {
-                        string recieveStr = Encoding.Unicode.GetString(bytes, 0, l);
-                        var recieveRequest = JsonConvert.DeserializeObject<Request>(recieveStr);
+                        int l = await clientSocket.ReceiveAsync(buffer, SocketFlags.None);
+                        data += Encoding.Unicode.GetString(buffer, 0, l);
+
+                        if (l < 1024)
+                            break;
+                    }
+                    while (true);
+
+                    if (data.Length > 0)
+                    {
+                        var recieveRequest = JsonConvert.DeserializeObject<Request>(data);
 
                         if (recieveRequest != null && recieveRequest.RequestType == Enums.RequestType.CheckFreeRooms)
                         {
@@ -221,6 +227,60 @@ namespace HotelReserveAppServer.Models
                                                                         {
                                                                             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                                                                         });
+
+                                        clientSocket.Send(Encoding.Unicode.GetBytes(sendStr));
+                                        Console.WriteLine($"Data sended to {ns.LocalEndPoint}");
+                                    }
+                                }
+                            }
+                            catch
+                            {
+                                var sendRequest = new Request
+                                {
+                                    RequestType = Enums.RequestType.ServerError,
+                                };
+
+                                string sendStr = JsonConvert.SerializeObject(sendRequest);
+
+                                clientSocket.Send(Encoding.Unicode.GetBytes(sendStr));
+                                Console.WriteLine($"Data sended to {ns.LocalEndPoint}");
+                            }
+                        }
+                        if (recieveRequest != null && recieveRequest.RequestType == Enums.RequestType.CancelOrder) 
+                        {
+                            try
+                            {
+                                if (recieveRequest.Reserves != null && recieveRequest.Reserves.Count() > 0)
+                                {
+                                    var reserve = await _context.RoomReserves.Include(x => x.User).Include(x => x.Room).FirstOrDefaultAsync(x => x.ReserveNumber.Equals(recieveRequest.Reserves.FirstOrDefault().ReserveNumber));
+
+                                    if (reserve != null)
+                                    {
+                                        _context.RoomReserves.Remove(reserve);
+                                        _context.SaveChanges();
+
+                                        var sendRequest = new Request
+                                        {
+                                            RequestType = Enums.RequestType.CancelOrder
+                                        };
+
+                                        string sendStr = JsonConvert.SerializeObject(sendRequest, Formatting.Indented,
+                                                                        new JsonSerializerSettings()
+                                                                        {
+                                                                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                                                        });
+
+                                        clientSocket.Send(Encoding.Unicode.GetBytes(sendStr));
+                                        Console.WriteLine($"Data sended to {ns.LocalEndPoint}");
+                                    }
+                                    else
+                                    {
+                                        var sendRequest = new Request
+                                        {
+                                            RequestType = Enums.RequestType.ReservesNotFound
+                                        };
+
+                                        string sendStr = JsonConvert.SerializeObject(sendRequest);
 
                                         clientSocket.Send(Encoding.Unicode.GetBytes(sendStr));
                                         Console.WriteLine($"Data sended to {ns.LocalEndPoint}");

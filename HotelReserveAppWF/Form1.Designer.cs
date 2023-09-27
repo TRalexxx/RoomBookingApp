@@ -338,6 +338,7 @@
             CancelOrderBtn.TabIndex = 36;
             CancelOrderBtn.Text = "Cancel order";
             CancelOrderBtn.UseVisualStyleBackColor = true;
+            CancelOrderBtn.Click += CancelOrderBtn_Click;
             // 
             // AvailableRoomsLB
             // 

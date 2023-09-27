@@ -108,14 +108,12 @@ namespace HotelReserveAppWF
                 else
                 {
                     MessageBox.Show($"No rooms available", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    //socket.Close();
                 }
 
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"{ex.Message}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                //socket.Close();
             }
         }
 
@@ -233,7 +231,7 @@ namespace HotelReserveAppWF
 
                     if (requestRecieve != null && requestRecieve.RequestType == RequestType.RoomReserved)
                     {
-                        MessageBox.Show($"You reserved room\nReserve details:\nReserve number: {reserve.ReserveNumber}\nReserve dates: {reserve.StartBookDate.Date} - {reserve.EndBookDate.Date}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show($"You reserved room\nReserve details:\nReserve number - {reserve.ReserveNumber}\nReserve dates - {reserve.StartBookDate.Date} - {reserve.EndBookDate.Date}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                         FullNameTB.Enabled = false;
                         FullNameTB.Text = string.Empty;
@@ -262,14 +260,12 @@ namespace HotelReserveAppWF
                 else
                 {
                     MessageBox.Show($"Something goes wrong", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    //socket.Close();
                 }
 
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"{ex.Message}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //socket.Close();
             }
         }
 
@@ -332,7 +328,7 @@ namespace HotelReserveAppWF
                                     FindReservesLB.Items.Add($"{reserve.ReserveNumber} - {reserve.User.Name} ({reserve.StartBookDate.ToShortDateString()} - {reserve.EndBookDate.ToShortDateString()})");
                                 else
                                     FindReservesLB.Items.Add($"{reserve.ReserveNumber} ({reserve.StartBookDate.Date} - {reserve.EndBookDate.Date}");
-                                
+
                                 _reserves.Add(reserve);
                             }
 
@@ -342,11 +338,11 @@ namespace HotelReserveAppWF
                     }
                     else if (requestRecieve != null && requestRecieve.RequestType == RequestType.UserNotFound)
                     {
-                        MessageBox.Show($"User not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"User not found", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else if (requestRecieve != null && requestRecieve.RequestType == RequestType.ReservesNotFound)
                     {
-                        MessageBox.Show($"Reserves not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Reserves not found", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else if (requestRecieve != null && requestRecieve.RequestType == RequestType.ServerError)
                     {
@@ -357,14 +353,12 @@ namespace HotelReserveAppWF
                 else
                 {
                     MessageBox.Show($"Something goes wrong", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    //socket.Close();
                 }
 
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"{ex.Message}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //socket.Close();
             }
         }
 
@@ -428,7 +422,7 @@ namespace HotelReserveAppWF
                     }
                     else if (requestRecieve != null && requestRecieve.RequestType == RequestType.ReservesNotFound)
                     {
-                        MessageBox.Show($"Reserve not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Reserve not found", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else if (requestRecieve != null && requestRecieve.RequestType == RequestType.ServerError)
                     {
@@ -439,14 +433,12 @@ namespace HotelReserveAppWF
                 else
                 {
                     MessageBox.Show($"Something goes wrong", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    //socket.Close();
                 }
 
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"{ex.Message}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //socket.Close();
             }
         }
 
@@ -458,7 +450,7 @@ namespace HotelReserveAppWF
             {
                 reserve = _reserves.FirstOrDefault(x => x.ReserveNumber.Equals(Int32.Parse(FindReservesLB.SelectedItem.ToString().Substring(0, 9))));
             }
-            if(reserve != null && reserve.User != null && reserve.Room != null)
+            if (reserve != null && reserve.User != null && reserve.Room != null)
             {
                 OrderDescriptionTB.AppendText($"Order number: {reserve.ReserveNumber}");
                 OrderDescriptionTB.AppendText(Environment.NewLine);
@@ -478,6 +470,77 @@ namespace HotelReserveAppWF
                 OrderDescriptionTB.AppendText(Environment.NewLine);
                 OrderDescriptionTB.AppendText($"Additional info: {reserve.AdditionalInfo}");
 
+            }
+        }
+
+        private async void CancelOrderBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var reserve = new RoomReserve();
+                if (FindReservesLB.SelectedItem != null)
+                {
+                    reserve = _reserves.FirstOrDefault(x => x.ReserveNumber.Equals(Int32.Parse(FindReservesLB.SelectedItem.ToString().Substring(0, 9))));
+                }
+                if (reserve != null)
+                {
+
+                    var request = new Request
+                    {
+                        RequestType = RequestType.CancelOrder,
+
+                        Reserves = new List<RoomReserve>() { reserve }
+                    };
+
+                    var requestStr = JsonConvert.SerializeObject(request);
+
+                    socket.Send(Encoding.Unicode.GetBytes(requestStr));
+
+                    byte[] buffer = new byte[1024];
+                    string data = "";
+
+                    do
+                    {
+                        int l = await socket.ReceiveAsync(buffer, SocketFlags.None);
+                        data += Encoding.Unicode.GetString(buffer, 0, l);
+
+                        if (l < 1024)
+                            break;
+                    }
+                    while (true);
+
+                    if (data.Length > 0)
+                    {
+
+                        var requestRecieve = JsonConvert.DeserializeObject<Request>(data);
+
+                        if (requestRecieve != null && requestRecieve.RequestType == RequestType.CancelOrder)
+                        {
+                            MessageBox.Show($"Reserve was canceled!", "Ok", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            FindReservesLB.Items.Clear();
+                            OrderDescriptionTB.Clear();
+
+                        }
+                        else if (requestRecieve != null && requestRecieve.RequestType == RequestType.ReservesNotFound)
+                        {
+                            MessageBox.Show($"Reserve not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        else if (requestRecieve != null && requestRecieve.RequestType == RequestType.ServerError)
+                        {
+                            MessageBox.Show($"Server error", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Something goes wrong", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
